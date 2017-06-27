@@ -1,0 +1,70 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Cloudformation to create a Autoscaling Group with a load balancer
+Parameters:
+  NumberOfInstances:
+    Type: Number
+    Description: Desired count of instances
+  DummyInstanceType:
+    Type: String
+    Description: Instance Type
+Resources:
+  SecurtyGroup:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties: 
+      GroupName: "${AWS::StackName}"
+      GroupDescription: SG to host the python application
+      SecurityGroupIngress:
+        - CidrIp: 0.0.0.0/0
+          ToPort: 80
+          FromPort: 80
+          IpProtocol: TCP
+        - CidrIp: 0.0.0.0/0
+          ToPort: 22
+          FromPort: 22
+          IpProtocol: TCP
+
+  LaunchConfig:
+    Type: "AWS::AutoScaling::LaunchConfiguration"
+    Properties:
+      EbsOptimized: false
+      ImageId: ami-6edd3078
+      InstanceType: !Ref DummyInstanceType
+      KeyName: devops-dummy
+      SecurityGroups:
+        - !GetAtt SecurtyGroup.GroupId
+
+  LoadBalancer:
+    Type: "AWS::ElasticLoadBalancing::LoadBalancer"
+    Properties:
+      AvailabilityZones: 
+        Fn::GetAZs: 
+          Ref: "AWS::Region"
+      Listeners:
+        - InstancePort: 80
+          InstanceProtocol: HTTP
+          LoadBalancerPort: 80
+          Protocol: http
+      Scheme: internet-facing
+      SecurityGroups:
+        - !GetAtt SecurtyGroup.GroupId
+
+  ASG: 
+    Type: "AWS::AutoScaling::AutoScalingGroup"
+    Properties: 
+      AvailabilityZones: 
+        Fn::GetAZs: 
+          Ref: "AWS::Region"
+      DesiredCapacity: !Ref NumberOfInstances
+      LaunchConfigurationName: !Ref LaunchConfig
+      MaxSize: 5
+      MinSize: 1
+      LoadBalancerNames:
+        - !Ref LoadBalancer
+
+Outputs:
+  LoadBalancerDNS:
+    Description: ELB DNS
+    Value: !GetAtt LoadBalancer.DNSName
+  ASGName:
+    Description: ASG Name
+    Value: !Ref ASG
