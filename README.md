@@ -22,3 +22,4 @@ Notes:
     - Assume that there are no security groups or key paris setup in the AWS account
     - Your script will have to setup those as well
     - No need to setup VPC, just launch EC2 instances without that
+
