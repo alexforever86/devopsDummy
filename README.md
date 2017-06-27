@@ -22,4 +22,29 @@ Notes:
     - Assume that there are no security groups or key paris setup in the AWS account
     - Your script will have to setup those as well
     - No need to setup VPC, just launch EC2 instances without that
+    
+    
+# Steps
+
+## Provisioning
+
+From `infra` directory, run `ec2.sh`
+
+```
+./ec2.sh <instance_count> <instance_type>
+```
+
+Eg: `./ec2.sh 5 t2.micro`
+
+## Deployment 
+
+From `ansible` directory, run `deploy.sh`
+
+```
+./getIp.sh <ASG_name> <pem_filepath>
+```
+
+Eg: `./getIp.sh devops_dummy /path/to/pem`
+
+Note: You can get the ASG name from the CloudFormation output or AWS Console
 
