@@ -1,0 +1,33 @@
+---
+- hosts: servers
+  vars_files:
+    - vars.yml
+  gather_facts: false
+  become: yes
+
+  tasks:
+    - name: apt-get update
+      raw: apt-get update -qq
+    - name: Install python 2.7
+      raw: apt-get install -qq python2.7
+    - name: Install system packages
+      apt: pkg={{ item }} update-cache=yes
+      with_items: "{{ system_packages }}"
+
+    - name: Save ssh key to server
+      copy: src={{ ssh_private_key }} dest=/root/.ssh/id_rsa mode=600
+
+    - name: Create directory for app
+      file: path={{ install_root }}/{{ project_name }} state=directory
+
+    - name: Clone/pull project repo
+      git: repo={{ project_repo }} dest={{ install_root }}/{{ project_name }} accept_hostkey=yes
+
+    - name: install python packages
+      pip: requirements={{ install_root }}/{{ project_name }}/requirements.txt
+
+    - name: django migrate
+      django_manage: command=migrate app_path={{ install_root }}/{{ project_name }} pythonpath={{ pythonpath }}
+
+    - name: run server
+      shell: "cd {{ install_root }}/{{ project_name }} && sudo python manage.py runserver 0.0.0.0:80 &"
