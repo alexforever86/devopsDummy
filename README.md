@@ -43,10 +43,10 @@ Eg: `./ec2.sh 5 t2.micro`
 From `ansible` directory, run `deploy.sh`
 
 ```
-./getIp.sh <ASG_name> <pem_filepath>
+./deploy.sh <ASG_name> <pem_filepath>
 ```
 
-Eg: `./getIp.sh devops_dummy /path/to/pem`
+Eg: `./deploy.sh devops_dummy /path/to/pem`
 
 Note: You can get the ASG name from the CloudFormation output or AWS Console
 
