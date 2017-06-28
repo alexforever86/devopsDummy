@@ -11,7 +11,7 @@ Resources:
   SecurtyGroup:
     Type: "AWS::EC2::SecurityGroup"
     Properties: 
-      GroupName: "${AWS::StackName}"
+      GroupName: !Sub ${AWS::StackName}
       GroupDescription: SG to host the python application
       SecurityGroupIngress:
         - CidrIp: 0.0.0.0/0

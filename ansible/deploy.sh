@@ -14,7 +14,7 @@ instances=($(aws autoscaling describe-auto-scaling-groups --auto-scaling-group-n
 for instance in "${instances[@]}"; do
     ip=$(aws ec2 describe-instances --instance-ids $instance | grep -iw PublicIpAddress | awk '{ print $2 }' | tr -d ',"\n')
     temp="$ip ansible_user=ubuntu ansible_ssh_private_key_file=$2"
-    awk -v temp="$temp" -i inplace 'BEGINFILE{print temp}{print}' hosts
+    awk -v temp="$temp" inplace 'BEGINFILE{print temp}{print}' hosts
 done
 
 sed -i '1s/^/[servers]\n/' hosts
