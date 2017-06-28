@@ -28,7 +28,13 @@ Notes:
 
 ## Provisioning
 
-* Export the AWS Credentials
+* Fork & clone the repo
+
+* Update the `project_repo` details with your GitHub repo url in `ansible/vars.yml` file
+
+* Configure AWS CLI
+
+`aws configure`
 
 * From `infra` directory, run `ec2.sh`
 
@@ -38,6 +44,8 @@ Notes:
 
 Eg: `./ec2.sh 5 t2.micro`
 
+After the CloudFormation stack is complete, deploy your application.
+
 ## Deployment 
 
 From `ansible` directory, run `deploy.sh`
@@ -46,7 +54,6 @@ From `ansible` directory, run `deploy.sh`
 ./deploy.sh <ASG_name> <pem_filepath>
 ```
 
-Eg: `./deploy.sh devops_dummy /path/to/pem`
+Eg: `./deploy.sh devops_dummy ../infra/devops-dummy.pem`
 
 Note: You can get the ASG name from the CloudFormation output or AWS Console
-

@@ -8,16 +8,20 @@ if [ "$#" -ne 2 ]; then
     exit
 fi
 
+# Install gawk
+sudo apt install gawk
+
 sed -i '/\[servers\:vars\]/,$!d' hosts
 
 instances=($(aws autoscaling describe-auto-scaling-groups --auto-scaling-group-name $1 | grep -i instanceid  | awk '{ print $2}' |tr -d ',"'))
 for instance in "${instances[@]}"; do
     ip=$(aws ec2 describe-instances --instance-ids $instance | grep -iw PublicIpAddress | awk '{ print $2 }' | tr -d ',"\n')
     temp="$ip ansible_user=ubuntu ansible_ssh_private_key_file=$2"
-    awk -v temp="$temp" inplace 'BEGINFILE{print temp}{print}' hosts
+    awk -v temp="$temp" -i inplace 'BEGINFILE{print temp}{print}' hosts
 done
 
 sed -i '1s/^/[servers]\n/' hosts
 
 
+export ANSIBLE_HOST_KEY_CHECKING=False
 ansible-playbook -i hosts main.yml
