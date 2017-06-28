@@ -28,7 +28,9 @@ Notes:
 
 ## Provisioning
 
-From `infra` directory, run `ec2.sh`
+* Export the AWS Credentials
+
+* From `infra` directory, run `ec2.sh`
 
 ```
 ./ec2.sh <instance_count> <instance_type>
